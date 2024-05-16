@@ -2,6 +2,7 @@ from pygame import *
 import sys
 
 font.init()
+mixer.init()
 
 class GameSprite(sprite.Sprite):
     def __init__(self, spr_image, x, y, size_x, size_y, speed):
@@ -46,11 +47,19 @@ ball = Ball("ball.png", 50, 350, 75, 75, 4, 4)
 
 font1 = font.SysFont("Calibri", 60)
 font2 = font.SysFont("Arial", 100)
+font3 = font.SysFont("Arial", 40)
+
+mixer.music.load("music.mp3")
+mixer.music.set_volume(0.5)
+mixer.music.play()
 
 clock = time.Clock()
 FPS = 60
 game = True
 finish = False
+
+points1 = 0
+points2 = 0
 
 while game:
     for e in event.get():
@@ -76,7 +85,17 @@ while game:
         ball.reset()
         ball.update()
 
+        points1_text = font3.render((("Счёт 1-го игрока:") + str(points1)), 1, (255, 255, 255))
+        points2_text = font3.render((("Счёт 2-го игрока:") + str(points2)), 1, (255, 255, 255))
+        window.blit(points1_text, (5, 5))
+        window.blit(points2_text, (720, 5))
+
         if ball.rect.x <= 0:
+            points2 += 1
+            wall1 = Wall("wall.png", 20, 325, 30, 150, 10, K_w, K_s)
+            wall2 = Wall("wall.png", 950, 325, 30, 150, 10, K_UP, K_DOWN)
+            ball = Ball("ball.png", 50, 350, 75, 75, 4, 4)
+        if points2 == 5:
             finish = True
             lose_font = font2.render("2-Й ИГРОК ПОБЕДИЛ!", True, (255, 255, 255))
             window.blit(lose_font, (80, 240))
@@ -84,6 +103,11 @@ while game:
             window.blit(more_font, (150, 370))
 
         if ball.rect.x >= 980:
+            points1 += 1
+            wall1 = Wall("wall.png", 20, 325, 30, 150, 10, K_w, K_s)
+            wall2 = Wall("wall.png", 950, 325, 30, 150, 10, K_UP, K_DOWN)
+            ball = Ball("ball.png", 50, 350, 75, 75, 4, 4)
+        if points1 == 5:
             finish = True
             lose_font = font2.render("1-Й ИГРОК ПОБЕДИЛ!", True, (255, 255, 255))
             window.blit(lose_font, (80, 240))
